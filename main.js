@@ -1,30 +1,35 @@
 let canvas;
 let context;
 
+const weeks = 52;
+
+
 function onLoad() {
   canvas = document.getElementById("canvas");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   context = canvas.getContext("2d");
-  console.log(canvas)
-  canvas.width = 1000;
-  canvas.height = 500;
-
-
-
-  drawSquare(context, "red", 100, 250);
-  drawSquare(context, "red", 250, 250);
-  drawSquare(context, "red", 400, 250);
+  init(context);
 }
 
-function init() {
- 
+function init(context) {
+  const age = 90;
+  const weeks = 52;
+
+  const width = 20;
+  const height = 20;
+  const offset = 5;
+
+  for(let x = 0; x < weeks ; x++ ) {
+    for(let y = 0; y < age; y++ ) {
+      drawSquare(context, "red", x * (width + offset), y * (height + offset), width, height);
+    }
+  }
 }
 
-function drawSquare(context, color, x, y) {
-  const width = 50;
-  const height = 50;
-
-  const innerRectWidth = 45;
-  const innerRectHeight = 45;
+function drawSquare(context, color, x, y, width, height) {
+  const innerRectWidth = width - 5;
+  const innerRectHeight = height - 5;
 
   context.shadowBlur = 20;
   context.shadowColor = color;
@@ -36,12 +41,6 @@ function drawSquare(context, color, x, y) {
   context.fillRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);
 
 }
-
-/*ctx[1].fillStyle = "black";
-ctx[1].fillRect(0,0,200,200);
-ctx[1].shadowBlur = 20;
-ctx[1].shadowColor = "red";
-ctx[1].fillRect(50,50,100,100);*/
 
 window.onload = onLoad;
 window.onresize = init;

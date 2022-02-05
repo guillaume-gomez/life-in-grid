@@ -1,14 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
-import CustomCanvas from "./CustomCanvas";
+import LifeGridCanvas from "./LifeGridCanvas";
+
+const deathAge = 6;
 
 function App() {
+  const [birthday] = useState<Date>(new Date(1992, 1, 2));
+  const [forecastDeath] = useState<Date>(new Date(1992 + deathAge, 1, 2));
   return (
     <div className="App">
       <div id="container">
       <h1 id="title">Your life in grid</h1>
-      <CustomCanvas />
+      <LifeGridCanvas deathDate={forecastDeath} birthdayDate={birthday} />
       <footer></footer>
     </div>
     </div>

@@ -1,15 +1,21 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { differenceInCalendarYears, differenceInCalendarISOWeeks, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
+import React, { useRef, useEffect } from 'react';
+import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
 
+interface Period {
+  name: string;
+  color: string;
+  start: Date;
+  end: Date;
+}
 
 interface LifeGridCanvasProps {
   birthdayDate: Date;
   deathDate: Date;
+  periods: Period[];
 }
 
-function LifeGridCanvas({birthdayDate, deathDate} : LifeGridCanvasProps) {
+function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const context = useRef<CanvasRenderingContext2D>(null);
   useEffect(() => {
     if(ref.current) {
       const context = ref.current.getContext("2d");
@@ -17,15 +23,21 @@ function LifeGridCanvas({birthdayDate, deathDate} : LifeGridCanvasProps) {
         init(context);
       }
     }
-  }, [ref]);
+  }, [ref, init]);
 
   function computeColor(date: Date) : string {
     if(isBefore(date, birthdayDate)) {
       return "blue";
     }
 
+    const periodFound = periods.find(period => isAfter(date, period.start) && isBefore(date, period.end));
+    if(periodFound) {
+      return periodFound.color;
+    }
+
     return "red";
   }
+
 
   function drawSquare(context: CanvasRenderingContext2D, color: string, x : number, y: number, width: number, height: number) {
     const innerRectWidth = width - 5;

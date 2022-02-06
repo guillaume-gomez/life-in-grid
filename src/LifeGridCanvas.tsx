@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { differenceInCalendarISOWeeks, startOfYear } from 'date-fns';
+import { differenceInCalendarYears, differenceInCalendarISOWeeks, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
 
 
 interface LifeGridCanvasProps {
@@ -18,6 +18,14 @@ function LifeGridCanvas({birthdayDate, deathDate} : LifeGridCanvasProps) {
       }
     }
   }, [ref]);
+
+  function computeColor(date: Date) : string {
+    if(isBefore(date, birthdayDate)) {
+      return "blue";
+    }
+
+    return "red";
+  }
 
   function drawSquare(context: CanvasRenderingContext2D, color: string, x : number, y: number, width: number, height: number) {
     const innerRectWidth = width - 5;
@@ -39,40 +47,32 @@ function LifeGridCanvas({birthdayDate, deathDate} : LifeGridCanvasProps) {
       return;
     }
     const startOfYearDate = startOfYear(birthdayDate);
-    
-    const weeks = differenceInCalendarISOWeeks(
-      deathDate,
-      birthdayDate
-    );
-    const offsetWeeks = differenceInCalendarISOWeeks(
-      birthdayDate,
-      startOfYearDate
-    );
+    const weeksArray = eachWeekOfInterval({
+      start:startOfYearDate,
+      end: deathDate
+    });
+
     const width = 20;
     const height = 20;
     const offset = 5;
+    const maxRow = 53;
 
-    const row = 52;
-    const column = Math.ceil(weeks / row);
-
-    ref.current.width = row * (width + offset);
-    ref.current.height = column * (height + offset);
+    ref.current.width = maxRow * (width + offset);
+    ref.current.height = (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) +1) * (height + offset);
 
     let x = 0;
     let y = 0;
-    for(let week = 0; week < offsetWeeks; week++){
-      drawSquare(context, "blue", x * (width + offset), y * (height + offset), width, height);
-      x++;
-    }
-    
-    for(let week = 0; week < weeks; week++){
-      drawSquare(context, "red", x * (width + offset), y * (height + offset), width, height);
-      x++;
-      if(x !== 0 && x % row === 0) {
+    let year = weeksArray[0].getFullYear();
+
+    weeksArray.forEach(week => {
+      if(year !== week.getFullYear()) {
         x = 0;
         y = y + 1;
+        year = week.getFullYear();
       }
-    }
+      drawSquare(context, computeColor(week), x * (width + offset), y * (height + offset), width, height);
+      x++;
+    })
   }
 
 

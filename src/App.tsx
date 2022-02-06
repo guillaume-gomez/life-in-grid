@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import LifeGridCanvas from "./LifeGridCanvas";
 
-const deathAge = 6;
+const deathAge = 90;
 
 function App() {
   const [birthday] = useState<Date>(new Date(1992, 1, 2));

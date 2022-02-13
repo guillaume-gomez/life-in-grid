@@ -101,30 +101,28 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
   }
 
   function render(context: CanvasRenderingContext2D, opacity: number) {
+    let currentColor : string = "FFFFFF";
     renderDataMemoized.forEach(renderData => {
       // TODO
       // render and build square separately to avoid to recreate context each times
+      if(currentColor != renderData.color) {
+        //context.shadowColor = renderData.color;
+        //context.shadowBlur = 20;
+        context.lineJoin = 'bevel';
+        context.lineWidth = 4;
+        context.strokeStyle = renderData.color;
+
+        currentColor = renderData.color;
+      }
       drawSquare(context, renderData, opacity);
     });
   }
 
 
   function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData, shadowBlur: number) {
-      const innerRectWidth = width - 5;
-      const innerRectHeight = height - 5;
-
-    context.save();
-
-    //context.shadowBlur = shadowBlur;
-    //context.shadowColor = color;
-    context.fillStyle = color;//"rgba(255,255,255, 0.5)";
-    context.fillRect(x, y, width, height);
-
-    //context.shadowBlur = 5;
-    context.fillStyle = "black";
-    context.fillRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);
-
-    context.restore();
+    const innerRectWidth = width - 5;
+    const innerRectHeight = height - 5;
+    context.strokeRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);
   }
 
   function init(context: CanvasRenderingContext2D) {

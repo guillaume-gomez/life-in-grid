@@ -27,19 +27,73 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
   const ref = useRef<HTMLCanvasElement>(null);
   const offsetShadowRef = useRef<number>(0.5);
   const shadowBlurRef = useRef<number>(20);
+  
   useEffect(() => {
+    function init(context: CanvasRenderingContext2D) {
+      if(!ref.current) {
+        return;
+      }
+      const startOfYearDate = startOfYear(birthdayDate);
+      const weeksArray = eachWeekOfInterval({
+        start:startOfYearDate,
+        end: deathDate
+      });
+
+      const width = 20;
+      const height = 20;
+      const offset = 5;
+      const maxRow = 53;
+
+      ref.current.width = maxRow * (width + offset);
+      ref.current.height = (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) + 1) * (height + offset);
+
+      //generateData(periods);
+    }
+
     if(ref.current) {
       const context = ref.current.getContext("2d");
-      console.log("here")
       if(context) {
         init(context);
-        render(context, shadowBlurRef.current);
       }
     }
-  }, [ref, init]);
-  const renderDataMemoized = useMemo(() => { return generateData(periods) }, [periods]);
-  console.log(renderDataMemoized)
 
+  }, [ref, birthdayDate, deathDate]);
+
+  const renderDataMemoized = useMemo(() => {
+    function generateData(periods: Period[]) {
+      const startOfYearDate = startOfYear(birthdayDate);
+      const weeksArray = eachWeekOfInterval({
+        start:startOfYearDate,
+        end: deathDate
+      });
+
+      const width = 20;
+      const height = 20;
+      const offset = 5;
+
+      let x = 0;
+      let y = 0;
+      let year = weeksArray[0].getFullYear();
+      let renderData : RenderData[] = [];
+
+      weeksArray.forEach(week => {
+        if(year !== week.getFullYear()) {
+          x = 0;
+          y = y + 1;
+          year = week.getFullYear();
+        }
+        renderData.push(
+          { color: computeColor(week), x : x * (width + offset), y: y * (height + offset), width, height }
+        );
+        x++;
+      });
+      return renderData;
+    }
+
+
+    return generateData(periods)
+  }, [periods]);
+  
   useAnimationFrame((deltaTime: number) => {
     if(!ref.current) {
       return;
@@ -68,44 +122,10 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
     return "red";
   }
 
-  function generateData(periods: Period[]) {
-    const startOfYearDate = startOfYear(birthdayDate);
-    const weeksArray = eachWeekOfInterval({
-      start:startOfYearDate,
-      end: deathDate
-    });
-
-    const width = 20;
-    const height = 20;
-    const offset = 5;
-    const maxRow = 53;
-
-    
-    let x = 0;
-    let y = 0;
-    let year = weeksArray[0].getFullYear();
-    let renderData : RenderData[] = [];
-
-    weeksArray.forEach(week => {
-      if(year !== week.getFullYear()) {
-        x = 0;
-        y = y + 1;
-        year = week.getFullYear();
-      }
-      renderData.push(
-        { color: computeColor(week), x : x * (width + offset), y: y * (height + offset), width, height }
-      );
-      x++;
-    });
-    return renderData;
-  }
-
   function render(context: CanvasRenderingContext2D, opacity: number) {
     let currentColor : string = "FFFFFF";
     renderDataMemoized.forEach(renderData => {
-      // TODO
-      // render and build square separately to avoid to recreate context each times
-      if(currentColor != renderData.color) {
+      if(currentColor !== renderData.color) {
         //context.shadowColor = renderData.color;
         //context.shadowBlur = 20;
         context.lineJoin = 'bevel';
@@ -124,28 +144,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
     const innerRectHeight = height - 5;
     context.strokeRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);
   }
-
-  function init(context: CanvasRenderingContext2D) {
-    if(!ref.current) {
-      return;
-    }
-    const startOfYearDate = startOfYear(birthdayDate);
-    const weeksArray = eachWeekOfInterval({
-      start:startOfYearDate,
-      end: deathDate
-    });
-
-    const width = 20;
-    const height = 20;
-    const offset = 5;
-    const maxRow = 53;
-
-    ref.current.width = maxRow * (width + offset);
-    ref.current.height = (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) +1) * (height + offset);
-
-    generateData(periods);
-  }
-
 
   return (
     <canvas ref={ref}></canvas>

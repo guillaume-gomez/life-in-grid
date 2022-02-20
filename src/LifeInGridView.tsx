@@ -18,10 +18,7 @@ function LifeInGridView() {
   const [birthday] = useState<Date>(new Date(1992, 1, 2));
   const [forecastDeath] = useState<Date>(new Date(1992 + deathAge, 1, 2));
   return (
-    <div>
-      <h1 id="title" className="text-3xl font-bold underline">Your life in grid</h1>
-      <LifeGridCanvas deathDate={forecastDeath} birthdayDate={birthday} periods={periods} />
-    </div>
+    <LifeGridCanvas deathDate={forecastDeath} birthdayDate={birthday} periods={periods} />
   );
 }
 

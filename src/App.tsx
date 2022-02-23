@@ -10,14 +10,14 @@ import FormView from "./FormView";
 
 function App() {
   return (
-      <div className="w-full">
+      <div className="flex flex-col gap-7">
         <NavBar/>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LifeInGridView />} />
-            <Route path="create" element={<FormView />} />
-          </Routes>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LifeInGridView />} />
+              <Route path="create" element={<FormView />} />
+            </Routes>
+          </BrowserRouter>
         <Footer/>
     </div>
   );

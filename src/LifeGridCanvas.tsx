@@ -43,11 +43,10 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
       const height = 20;
       const offset = 5;
       const maxRow = 53;
+      const padding = 40;
 
-      ref.current.width = maxRow * (width + offset);
-      ref.current.height = (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) + 1) * (height + offset);
-
-      //generateData(periods);
+      ref.current.width =  padding + maxRow * (width + offset);
+      ref.current.height = padding + (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) + 1) * (height + offset);
     }
 
     if(ref.current) {
@@ -70,6 +69,8 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
       const width = 20;
       const height = 20;
       const offset = 5;
+      const padding = 40;
+      const halfPadding = padding/2;
 
       let x = 0;
       let y = 0;
@@ -83,7 +84,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
           year = week.getFullYear();
         }
         renderData.push(
-          { color: computeColor(week), x : x * (width + offset), y: y * (height + offset), width, height }
+          { color: computeColor(week), x : halfPadding + x * (width + offset), y:  halfPadding + y * (height + offset), width, height }
         );
         x++;
       });
@@ -146,7 +147,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
   }
 
   return (
-    <canvas ref={ref}></canvas>
+    <canvas className="w-10/12 bg-black" id="custom-canvas" ref={ref}></canvas>
   );
 }
 

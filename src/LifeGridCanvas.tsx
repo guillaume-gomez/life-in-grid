@@ -113,7 +113,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
     renderDataMemoized.forEach(renderData => {
       if(currentColor !== renderData.color) {
         context.shadowColor = renderData.color;
-        context.shadowBlur = 20;
+        context.shadowBlur = 10;
         context.lineJoin = 'bevel';
         context.lineWidth = 4;
         context.strokeStyle = renderData.color;/// + Math.ceil(opacity).toString(16);

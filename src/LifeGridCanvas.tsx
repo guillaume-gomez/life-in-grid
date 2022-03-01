@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
-import useAnimationFrame from "./useAnimationFrame";
 
 interface Period {
   name: string;
@@ -25,7 +24,7 @@ interface LifeGridCanvasProps {
 
 function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const offsetShadowRef = useRef<number>(0.5);
+  const offsetShadowRef = useRef<number>(1);
   const shadowBlurRef = useRef<number>(20);
   
   useEffect(() => {
@@ -53,6 +52,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
       const context = ref.current.getContext("2d");
       if(context) {
         init(context);
+        render(context);
       }
     }
 
@@ -95,21 +95,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
     return generateData(periods)
   }, [periods]);
   
-  useAnimationFrame((deltaTime: number) => {
-    if(!ref.current) {
-      return;
-    }
-    const context = ref.current.getContext("2d");
-    if(context) {
-      shadowBlurRef.current += offsetShadowRef.current * deltaTime;
-      if(shadowBlurRef.current > 15 || shadowBlurRef.current < 1){
-        offsetShadowRef.current *= -1;
-      }
-      context.clearRect(0, 0, ref.current.width, ref.current.height);
-      render(context, shadowBlurRef.current);
-    }
-  });
-
   function computeColor(date: Date) : string {
     if(isBefore(date, birthdayDate)) {
       return "blue";
@@ -123,24 +108,23 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
     return "red";
   }
 
-  function render(context: CanvasRenderingContext2D, opacity: number) {
+  function render(context: CanvasRenderingContext2D) {
     let currentColor : string = "FFFFFF";
     renderDataMemoized.forEach(renderData => {
       if(currentColor !== renderData.color) {
-        //context.shadowColor = renderData.color;
-        //context.shadowBlur = 20;
+        context.shadowColor = renderData.color;
+        context.shadowBlur = 20;
         context.lineJoin = 'bevel';
         context.lineWidth = 4;
-        context.strokeStyle = renderData.color;
-
+        context.strokeStyle = renderData.color;/// + Math.ceil(opacity).toString(16);
         currentColor = renderData.color;
       }
-      drawSquare(context, renderData, opacity);
+      drawSquare(context, renderData);
     });
   }
 
 
-  function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData, shadowBlur: number) {
+  function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData) {
     const innerRectWidth = width - 5;
     const innerRectHeight = height - 5;
     context.strokeRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);

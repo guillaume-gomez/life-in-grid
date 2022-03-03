@@ -1,12 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
-
-interface Period {
-  name: string;
-  color: string;
-  start: Date;
-  end: Date;
-}
+import { Period } from "./interfaces";
 
 interface RenderData {
   color: string;
@@ -14,19 +8,19 @@ interface RenderData {
   y: number;
   width: number;
   height: number;
+  name: string;
 }
 
 interface LifeGridCanvasProps {
   birthdayDate: Date;
   deathDate: Date;
   periods: Period[];
+  selectedPeriod: string;
 }
 
-function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasProps) {
+function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const offsetShadowRef = useRef<number>(1);
-  const shadowBlurRef = useRef<number>(20);
-  
+
   useEffect(() => {
     function init(context: CanvasRenderingContext2D) {
       if(!ref.current) {
@@ -56,7 +50,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
       }
     }
 
-  }, [ref, birthdayDate, deathDate]);
+  }, [ref, birthdayDate, deathDate, selectedPeriod]);
 
   const renderDataMemoized = useMemo(() => {
     function generateData(periods: Period[]) {
@@ -84,7 +78,14 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
           year = week.getFullYear();
         }
         renderData.push(
-          { color: computeColor(week), x : halfPadding + x * (width + offset), y:  halfPadding + y * (height + offset), width, height }
+          { 
+            color: computeColor(week),
+            name: computeName(week),
+            x : halfPadding + x * (width + offset),
+            y:  halfPadding + y * (height + offset),
+            width,
+            height,
+          }
         );
         x++;
       });
@@ -94,6 +95,14 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
 
     return generateData(periods)
   }, [periods]);
+
+  function computeName(date: Date) : string {
+    const periodFound = periods.find(period => isAfter(date, period.start) && isBefore(date, period.end));
+    if(periodFound) {
+      return periodFound.name;
+    }
+    return "none";
+  }
   
   function computeColor(date: Date) : string {
     if(isBefore(date, birthdayDate)) {
@@ -105,7 +114,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
       return periodFound.color;
     }
 
-    return "red";
+    return "grey";
   }
 
   function render(context: CanvasRenderingContext2D) {
@@ -116,22 +125,23 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods } : LifeGridCanvasPro
         context.shadowBlur = 10;
         context.lineJoin = 'bevel';
         context.lineWidth = 4;
-        context.strokeStyle = renderData.color;/// + Math.ceil(opacity).toString(16);
+        context.strokeStyle = renderData.color;
         currentColor = renderData.color;
       }
-      drawSquare(context, renderData);
+      drawSquare(context, renderData, renderData.name === selectedPeriod);
     });
   }
 
 
-  function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData) {
-    const innerRectWidth = width - 5;
-    const innerRectHeight = height - 5;
+  function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData, selected: boolean) {
+    const offset = selected ? 1 : 5
+    const innerRectWidth = width - offset;
+    const innerRectHeight = height - offset;
     context.strokeRect(x + (width - innerRectWidth)/2, y + (height - innerRectHeight)/2, innerRectWidth, innerRectHeight);
   }
 
   return (
-    <canvas className="w-10/12 bg-black" id="custom-canvas" ref={ref}></canvas>
+    <canvas className="w-full bg-gray-800 rounded-2xl" id="custom-canvas" ref={ref}></canvas>
   );
 }
 

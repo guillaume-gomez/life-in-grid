@@ -141,7 +141,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
   }
 
   return (
-    <canvas className="w-full bg-gray-800 rounded-2xl" id="custom-canvas" ref={ref}></canvas>
+    <canvas className="w-full bg-black rounded-2xl" id="custom-canvas" ref={ref}></canvas>
   );
 }
 

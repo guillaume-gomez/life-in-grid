@@ -29,7 +29,7 @@ function LifeInGridView() {
   }
 
   return (
-    <div className="flex flex-row gap-7 p-2">
+    <div className="flex flex-col md:flex-row gap-5 p-2">
         <Legend selectedPeriod={selectedPeriod} selectedPeriodCallback={selectedPeriodCallback} periods={periods} />
         <LifeGridCanvas deathDate={forecastDeath} birthdayDate={birthday} periods={periods} selectedPeriod={selectedPeriod} />
     </div>

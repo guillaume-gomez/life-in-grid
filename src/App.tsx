@@ -12,12 +12,15 @@ function App() {
   return (
       <div className="flex flex-col gap-7">
         <NavBar/>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LifeInGridView />} />
-              <Route path="create" element={<FormView />} />
-            </Routes>
-          </BrowserRouter>
+          <div className="p-3 ">
+            <BrowserRouter>
+              <Routes>
+                  <Route path="/" element={<LifeInGridView />} />
+                  <Route path="create" element={<FormView />} />
+                  <Route path="*" element={<LifeInGridView />} />
+              </Routes>
+            </BrowserRouter>
+          </div>
         <Footer/>
     </div>
   );

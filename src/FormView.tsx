@@ -88,24 +88,26 @@ interface TimeSlotInterface {
 
 
 function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlotInterface) {
+  const editButton = <button className="btn btn-secondary" onClick={() => onChange("edit", !edit)}>✏️</button>;
+
   if(edit) {
     return (
       <tr>
-        <th>{position}</th>
-        <td>
-          <input value={name} onChange={(event) => onChange("name", event.target.value)}/>
+        <th className="w-1/12">{position}</th>
+        <td className="w-3/12">
+          <input className="input input-bordered w-full max-w-xs" value={name} onChange={(event) => onChange("name", event.target.value)}/>
         </td>
-        <td>
-          <input type="date" value={start} onChange={(event) => onChange("start", event.target.value)}/>
+        <td className="w-3/12">
+          <input type="date" className="bg-base-300" value={start} onChange={(event) => onChange("start", event.target.value)}/>
         </td>
-        <td>
-          <input type="date" value={end} onChange={(event) => onChange("end", event.target.value)}/>
+        <td className="w-3/12">
+          <input type="date" className="bg-base-300" value={end} onChange={(event) => onChange("end", event.target.value)}/>
         </td>
-        <td>
-          <input value={color} onChange={(event) => onChange("color", event.target.value)}/>
+        <td className="w-1/12">
+          <input type="color" value={color} onChange={(event) => onChange("color", event.target.value)}/>
         </td>
-        <td>
-          <button onClick={() => onChange("edit", !edit)}>✏️</button>
+        <td className="w-1/12">
+          {editButton}
         </td>
       </tr>
     );
@@ -114,13 +116,15 @@ function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlo
 
   return (
       <tr>
-        <th>{position}</th>
-        <td>{name}</td>
-        <td>{start}</td>
-        <td>{end}</td>
-        <td>{color}</td>
-        <td>
-          <button onClick={() => onChange("edit", !edit)}>✏️</button>
+        <th className="w-1/12">{position}</th>
+        <td className="w-3/12">{name}</td>
+        <td className="w-3/12">{start}</td>
+        <td className="w-3/12">{end}</td>
+        <td className="w-1/12">
+          <input type="color" value={color}/>
+        </td>
+        <td className="w-1/12">
+          {editButton}
         </td>
       </tr>
     );

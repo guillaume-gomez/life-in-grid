@@ -19,11 +19,26 @@ function FormView() {
   const [periods, setPeriods] = useState<PeriodForm[]>(defaultPeriods);
 
   function onChangeItem(index: number, name: keyof PeriodForm, value: unknown) : void {
+    if(name === "edit") {
+      changeEdit(index);
+      return;
+    }
+
     const newPeriods = periods.map((period, indexPeriod) => {
       if(indexPeriod === index) {
         return { ...period , [name]: value};
       }
       return period;
+    });
+    setPeriods(newPeriods);
+  }
+
+  function changeEdit(index: number) {
+    const newPeriods = periods.map((period, indexPeriod) => {
+      if(indexPeriod === index) {
+        return { ...period , edit: true};
+      }
+      return { ...period , edit: false};
     });
     setPeriods(newPeriods);
   }

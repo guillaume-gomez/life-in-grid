@@ -43,16 +43,21 @@ function FormView() {
     setPeriods(newPeriods);
   }
 
+  function addTimeslot() {
+    const periodsInReadOnly = periods.map((period) => ({ ...period, edit: false }) );
+    setPeriods([...periodsInReadOnly, {name: "New timeslot", color: "red", start: "", end: "", edit: true }]);
+  }
+
   return (
     <div className="card w-full bg-base-300 shadow-xl">
       <div className="card-body">
         <div className="flex justify-between">
           <h2 className="card-title">Create your timeline</h2>
-          <button className="btn btn-primary">Add TimeSlot</button>
+          <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
         </div>
         <div className="flex flex-col gap-7">
           <div className="overflow-x-auto">
-            <table className="table w-full">
+            <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
               <thead>
                 <tr>
                   <th>Position</th>
@@ -103,20 +108,20 @@ interface TimeSlotInterface {
 
 
 function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlotInterface) {
-  const editButton = <button className="btn btn-secondary" onClick={() => onChange("edit", !edit)}>✏️</button>;
+  const editButton = <button className="btn btn-ghost" onClick={() => onChange("edit", !edit)}>✏️</button>;
 
   if(edit) {
     return (
-      <tr>
+      <tr className="active">
         <th className="w-1/12">{position}</th>
         <td className="w-3/12">
-          <input className="input input-bordered w-full max-w-xs" value={name} onChange={(event) => onChange("name", event.target.value)}/>
+          <input className="input w-full max-w-xs" value={name} onChange={(event) => onChange("name", event.target.value)}/>
         </td>
         <td className="w-3/12">
-          <input type="date" className="bg-base-300" value={start} onChange={(event) => onChange("start", event.target.value)}/>
+          <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={start} onChange={(event) => onChange("start", event.target.value)}/>
         </td>
         <td className="w-3/12">
-          <input type="date" className="bg-base-300" value={end} onChange={(event) => onChange("end", event.target.value)}/>
+          <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={end} onChange={(event) => onChange("end", event.target.value)}/>
         </td>
         <td className="w-1/12">
           <input type="color" value={color} onChange={(event) => onChange("color", event.target.value)}/>
@@ -136,7 +141,7 @@ function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlo
         <td className="w-3/12">{start}</td>
         <td className="w-3/12">{end}</td>
         <td className="w-1/12">
-          <input type="color" value={color}/>
+          <input disabled type="color" value={color}/>
         </td>
         <td className="w-1/12">
           {editButton}

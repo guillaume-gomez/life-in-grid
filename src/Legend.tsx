@@ -16,7 +16,7 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod } : LegendInte
                 {
                     periods.map(period => {
                         return (
-                            <button className={ selectedPeriod === period.name ? "btn btn-accent" :"btn btn-ghost"} onClick={() => selectedPeriodCallback(period.name)}>
+                            <button key={period.name} className={ selectedPeriod === period.name ? "btn btn-accent" :"btn btn-ghost"} onClick={() => selectedPeriodCallback(period.name)}>
                                 <div className="flex gap-2 justify-center items-center">
                                     <div className="w-6 h-6 rounded" style={{backgroundColor: period.color}}></div>
                                     {period.name}

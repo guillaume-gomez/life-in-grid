@@ -17,10 +17,11 @@ const defaultPeriods : PeriodForm[] = [
 
 function FormView() {
   const [periods, setPeriods] = useState<PeriodForm[]>(defaultPeriods);
+  const [birthday, setBirthday] = useState<string>("");
 
   function onChangeItem(index: number, name: keyof PeriodForm, value: unknown) : void {
     if(name === "edit") {
-      changeEdit(index);
+      changeEdit(index, value as boolean);
       return;
     }
 
@@ -33,12 +34,12 @@ function FormView() {
     setPeriods(newPeriods);
   }
 
-  function changeEdit(index: number) {
+  function changeEdit(index: number, value: boolean) {
     const newPeriods = periods.map((period, indexPeriod) => {
       if(indexPeriod === index) {
-        return { ...period , edit: true};
+        return { ...period , edit: value };
       }
-      return { ...period , edit: false};
+      return { ...period , edit: false };
     });
     setPeriods(newPeriods);
   }
@@ -51,40 +52,49 @@ function FormView() {
   return (
     <div className="card w-full bg-base-300 shadow-xl">
       <div className="card-body">
-        <div className="flex justify-between">
-          <h2 className="card-title">Create your timeline</h2>
-          <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
-        </div>
+        <h2 className="card-title">Create your life grid</h2>
         <div className="flex flex-col gap-7">
-          <div className="overflow-x-auto">
-            <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
-              <thead>
-                <tr>
-                  <th>Position</th>
-                  <th>Name</th>
-                  <th>Start</th>
-                  <th>End</th>
-                  <th>Color</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                  periods.map( ({name, start, end, color, edit}, index) => {
-                    return <TimeSlot 
-                      position={index + 1}
-                      key={index}
-                      name={name}
-                      start={start}
-                      end={end}
-                      color={color}
-                      edit={edit}
-                      onChange={(name, value) => onChangeItem(index, name, value)}
-                      />
-                  })
-                }
-              </tbody>
-            </table>
+          <div>
+            <h3 className="card-title">Enter your birthday</h3>
+            <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={birthday} onChange={(event) => setBirthday(event.target.value)}/>
+          </div>
+          <div className="flex flex-col gap-7">
+            <div>
+              <div className="flex justify-between">
+                <h3 className="card-title">Create your periods</h3>
+                <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
+                  <thead>
+                    <tr>
+                      <th>Position</th>
+                      <th>Name</th>
+                      <th>Start</th>
+                      <th>End</th>
+                      <th>Color</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      periods.map( ({name, start, end, color, edit}, index) => {
+                        return <TimeSlot
+                          position={index + 1}
+                          key={index}
+                          name={name}
+                          start={start}
+                          end={end}
+                          color={color}
+                          edit={edit}
+                          onChange={(name, value) => onChangeItem(index, name, value)}
+                          />
+                      })
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
           <div className="card-actions justify-end">
             <button className="btn btn-primary">Generate 🚀</button>

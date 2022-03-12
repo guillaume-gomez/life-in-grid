@@ -49,55 +49,68 @@ function FormView() {
     setPeriods([...periodsInReadOnly, {name: "New timeslot", color: "red", start: "", end: "", edit: true }]);
   }
 
+  function removeTimeslot(indexToDelete: number) {
+    const newPeriods = periods.filter((_period, index) => indexToDelete !== index);
+    setPeriods(newPeriods);
+  }
+
+  function isValid() : boolean {
+    const invalidPeriods = periods.filter(period => period.start === "" || period.end === "");
+    return birthday !== "" && periods.length > 0 && invalidPeriods.length === 0;
+  }
+
   return (
     <div className="card w-full bg-base-300 shadow-xl">
-      <div className="card-body">
+      <div className="card-body gap-7">
         <h2 className="card-title">Create your life grid</h2>
-        <div className="flex flex-col gap-7">
+        <div className="flex flex-col gap-3">
           <div>
-            <h3 className="card-title">Enter your birthday</h3>
-            <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={birthday} onChange={(event) => setBirthday(event.target.value)}/>
+            <label className="label">
+              <span className="label-text">Enter your birthday</span>
+            </label>
+            <DatePicker value={birthday} onChange={setBirthday} />
           </div>
-          <div className="flex flex-col gap-7">
-            <div>
-              <div className="flex justify-between">
-                <h3 className="card-title">Create your periods</h3>
-                <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
-                  <thead>
-                    <tr>
-                      <th>Position</th>
-                      <th>Name</th>
-                      <th>Start</th>
-                      <th>End</th>
-                      <th>Color</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {
-                      periods.map( ({name, start, end, color, edit}, index) => {
-                        return <TimeSlot
-                          position={index + 1}
-                          key={index}
-                          name={name}
-                          start={start}
-                          end={end}
-                          color={color}
-                          edit={edit}
-                          onChange={(name, value) => onChangeItem(index, name, value)}
-                          />
-                      })
-                    }
-                  </tbody>
-                </table>
-              </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between">
+              <label className="label">
+                <span className="label-text">Create your periods</span>
+              </label>
+              <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
+                <thead>
+                  <tr>
+                    <th>Position</th>
+                    <th>Name</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Color</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {
+                    periods.map( ({name, start, end, color, edit}, index) => {
+                      return <TimeSlot
+                        position={index + 1}
+                        key={index}
+                        name={name}
+                        start={start}
+                        end={end}
+                        color={color}
+                        edit={edit}
+                        onDelete={() => removeTimeslot(index)}
+                        onChange={(name, value) => onChangeItem(index, name, value)}
+                        />
+                    })
+                  }
+                </tbody>
+              </table>
             </div>
           </div>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary">Generate 🚀</button>
+            <button className="btn btn-primary" disabled={!isValid()}>Generate 🚀</button>
           </div>
         </div>
       </div>
@@ -114,11 +127,13 @@ interface TimeSlotInterface {
   position: number;
   edit: boolean;
   onChange: (name: keyof PeriodForm, value: unknown) => void;
+  onDelete: () => void;
 }
 
 
-function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlotInterface) {
+function TimeSlot({name, start, end, color, position, edit, onChange, onDelete } : TimeSlotInterface) {
   const editButton = <button className="btn btn-ghost" onClick={() => onChange("edit", !edit)}>✏️</button>;
+  const trashButton = <button className="btn btn-ghost" onClick={onDelete}>🗑</button>;
 
   if(edit) {
     return (
@@ -128,16 +143,17 @@ function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlo
           <input className="input w-full max-w-xs" value={name} onChange={(event) => onChange("name", event.target.value)}/>
         </td>
         <td className="w-3/12">
-          <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={start} onChange={(event) => onChange("start", event.target.value)}/>
+          <DatePicker value={start} onChange={(value)=> onChange("start",value) } />
         </td>
         <td className="w-3/12">
-          <input type="date" className="rounded-lg bg-base-100 p-4 h-12 border-current" value={end} onChange={(event) => onChange("end", event.target.value)}/>
+          <DatePicker value={end} onChange={(value)=> onChange("end",value) } />
         </td>
         <td className="w-1/12">
           <input type="color" value={color} onChange={(event) => onChange("color", event.target.value)}/>
         </td>
         <td className="w-1/12">
           {editButton}
+          {trashButton}
         </td>
       </tr>
     );
@@ -145,7 +161,7 @@ function TimeSlot({name, start, end, color, position, edit, onChange } : TimeSlo
 
 
   return (
-      <tr>
+      <tr onClick={()=> onChange("edit", true)}>
         <th className="w-1/12">{position}</th>
         <td className="w-3/12">{name}</td>
         <td className="w-3/12">{start}</td>

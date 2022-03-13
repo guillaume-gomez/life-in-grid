@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import DatePicker from "./DatePicker";
 import { Period } from "./interfaces";
 
@@ -9,7 +10,7 @@ interface PeriodForm extends Omit<Period, 'start' | 'end'> {
 }
 
 const defaultPeriods : PeriodForm[] = [
-  { name: "pre-school", color: "#bbd00d", start: "1900-01-01", end: "1900-12-31", edit: false },
+  { name: "pre-school", color: "#bbd00d", start: "1900-01-10", end: "1900-12-31", edit: false },
   { name: "middle-school", color: "#17810a", start: "1901-01-01", end: "1901-12-31", edit: false },
   { name: "high-school", color: "#a4580b", start: "1902-01-01", end: "1902-12-31", edit: false },
   { name: "college", color: "#45173b", start: "1903-01-01", end: "1903-12-31", edit: false },
@@ -17,7 +18,8 @@ const defaultPeriods : PeriodForm[] = [
 
 function FormView() {
   const [periods, setPeriods] = useState<PeriodForm[]>(defaultPeriods);
-  const [birthday, setBirthday] = useState<string>("");
+  const [birthday, setBirthday] = useState<string>("1900-01-01");
+  const navigate = useNavigate();
 
   function onChangeItem(index: number, name: keyof PeriodForm, value: unknown) : void {
     if(name === "edit") {
@@ -57,6 +59,18 @@ function FormView() {
   function isValid() : boolean {
     const invalidPeriods = periods.filter(period => period.start === "" || period.end === "");
     return birthday !== "" && periods.length > 0 && invalidPeriods.length === 0;
+  }
+
+  function generate() {
+    let params = new URLSearchParams();
+    params.append("birthday", birthday);
+    params.append("period-length", periods.length.toString());
+    periods.forEach((period, index) => {
+      Object.entries(period).forEach(([key, value]) => {
+        params.append(`periods[${index}][${key}]`, value.toString());
+      })
+    });
+    navigate(`/?${params.toString()}`);
   }
 
   return (
@@ -110,7 +124,7 @@ function FormView() {
             </div>
           </div>
           <div className="card-actions justify-end">
-            <button className="btn btn-primary" disabled={!isValid()}>Generate 🚀</button>
+            <button className="btn btn-primary" disabled={!isValid()} onClick={generate}>Generate 🚀</button>
           </div>
         </div>
       </div>

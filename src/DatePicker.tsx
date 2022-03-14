@@ -1,5 +1,4 @@
 import React from 'react';
-import GitHubStarLink from "./GithubStarLink";
 
 import "./DatePicker.css";
 

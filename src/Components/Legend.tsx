@@ -63,8 +63,8 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod } : LegendInte
                                         <span>{name}</span>
                                     </div>
                                     {
-                                        value.dates.map(date =>
-                                            <span className="text-xs">{date.start.toDateString()} - {date.end.toDateString()}</span>
+                                        value.dates.map((date, index) =>
+                                            <span key={index} className="text-xs">{date.start.toDateString()} - {date.end.toDateString()}</span>
                                         )
                                     }
                                 </div>

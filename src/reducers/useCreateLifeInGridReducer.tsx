@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { uniqueId } from "lodash";
 import { createContainer } from "unstated-next";
-import { PeriodFormInterface, TimeSlotFormInterface } from "../interfaces";
+import { PeriodFormInterface, TimeSlotFormInterface, Period } from "../interfaces";
 //import { } from 'date-fns';
 
 interface stateInterface {

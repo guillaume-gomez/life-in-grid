@@ -5,6 +5,7 @@ import BirthdayForm from "./BirthdayForm";
 import TimeSlotsForm from "./TimeSlotsForm";
 import PeriodsForm from "./PeriodsForm";
 import DataForm from "../reducers/useCreateLifeInGridReducer";
+import { Period } from "../interfaces";
 
 function FormSteps() {
   const { birthday, periods, timeSlots } = DataForm.useContainer();
@@ -27,12 +28,22 @@ function FormSteps() {
   function generate() {
     let params = new URLSearchParams();
     params.append("birthday", birthday);
-    params.append("period-length", periods.length.toString());
-/*    periods.forEach((period, index) => {
+    //const computedPeriods :Period[] = computePeriodsParam();
+
+    const computedPeriods = periods.map(period => {
+      const timeSlot = timeSlots.find(timeSlot => timeSlot.id === period.timeSlotId);
+      const name = timeSlot?.name || "unexisting time slot";
+      const color = timeSlot?.color || "#000000";
+      const periodWithTimeSlot = { name, color, start: period.start, end: period.end };
+      return periodWithTimeSlot;
+    });
+    params.append("period-length", computedPeriods.length.toString());
+
+    computedPeriods.forEach((period, index) => {
       Object.entries(period).forEach(([key, value]) => {
         params.append(`periods[${index}][${key}]`, value.toString());
       })
-    });*/
+    });
     navigate(`/?${params.toString()}`);
   }
 

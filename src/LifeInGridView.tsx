@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from "react-router-dom";
-import LifeGridCanvas from "./LifeGridCanvas";
-import Legend from "./Legend";
+import LifeGridCanvas from "./Components/LifeGridCanvas";
+import Legend from "./Components/Legend";
 
 import { parseArrayKey, is2dimArrayKey } from "./queryStringHelper";
 import { Period } from "./interfaces";
 
-const deathAge = 80;
+const deathAge = 90;
 const myPeriods : Period[] = [
   { name: "pre-school", color: "#af1414", start: new Date("1995-09-01"), end: new Date("1998-06-01") },
   { name: "middle-school", color: "#17810a", start: new Date("1998-09-01"), end: new Date("2003-06-01") },
@@ -15,7 +15,8 @@ const myPeriods : Period[] = [
   { name: "IT-schools", color: "#dc6cc3", start: new Date("2010-09-01"), end: new Date("2015-06-01") },
   { name: "Applidget", color: "#35986f", start: new Date("2015-08-01"), end: new Date("2017-11-01") },
   { name: "Amuse", color: "#F109F9", start: new Date("2017-11-01"), end: new Date("2021-12-15") },
-  { name: "Ecotree", color: "#131963", start: new Date("2022-01-03"), end: new Date("2022-02-22") },
+  { name: "Ecotree", color: "#131963", start: new Date("2022-01-03"), end: new Date("2022-03-13") },
+  { name: "pre-school", color: "#af1414", start: new Date("2025-09-01"), end: new Date("2027-06-01") },
 ]
 
 function LifeInGridView() {
@@ -46,7 +47,6 @@ function LifeInGridView() {
 
     setBirthday(new Date(queryStringObject.birthday));
     setPeriods(queryStringObject.periods.map((period: any)=>sanitizePeriodPayload(period)));
-    console.log("fdjkfdj")
   }, [params])
 
   function sanitizePeriodPayload(payloadPeriod: any ) : Period {

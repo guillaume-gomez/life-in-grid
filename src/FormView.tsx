@@ -1,24 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import DatePicker from "./DatePicker";
+import DatePicker from "./Components/DatePicker";
 import { Period } from "./interfaces";
+import BirthdayForm from "./BirthdayForm";
+import TimeSlotsForm from "./TimeSlotsForm";
 
 interface PeriodForm extends Omit<Period, 'start' | 'end'> {
   edit: boolean;
   start: string;
-  end: string
+  end: string;
 }
 
 const defaultPeriods : PeriodForm[] = [
-  { name: "pre-school", color: "#bbd00d", start: "1900-01-10", end: "1900-12-31", edit: false },
-  { name: "middle-school", color: "#17810a", start: "1901-01-01", end: "1901-12-31", edit: false },
-  { name: "high-school", color: "#a4580b", start: "1902-01-01", end: "1902-12-31", edit: false },
-  { name: "college", color: "#45173b", start: "1903-01-01", end: "1903-12-31", edit: false },
-  ]
+  { name: "pre-school", color: "#bbd00d", start: "1990-01-10", end: "1990-12-31", edit: false },
+  { name: "middle-school", color: "#17810a", start: "1991-01-01", end: "1991-12-31", edit: false },
+  { name: "high-school", color: "#a4580b", start: "1992-01-01", end: "1992-12-31", edit: false },
+  { name: "college", color: "#45173b", start: "1993-01-01", end: "1993-12-31", edit: false },
+];
 
 function FormView() {
   const [periods, setPeriods] = useState<PeriodForm[]>(defaultPeriods);
-  const [birthday, setBirthday] = useState<string>("1900-01-01");
+  const [birthday, setBirthday] = useState<string>(Date.now().toString());
+  const [currentStep, setCurrentStep] = useState<number>(0);
   const navigate = useNavigate();
 
   function onChangeItem(index: number, name: keyof PeriodForm, value: unknown) : void {
@@ -73,58 +76,109 @@ function FormView() {
     navigate(`/?${params.toString()}`);
   }
 
+  function timeslotDurationForm() {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex justify-between">
+          <label className="label prose">
+            <h2 className="label-text">Create your periods</h2>
+          </label>
+          <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Name</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Color</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                periods.map( ({name, start, end, color, edit}, index) => {
+                  return <TimeSlot
+                    position={index + 1}
+                    key={index}
+                    name={name}
+                    start={start}
+                    end={end}
+                    color={color}
+                    edit={edit}
+                    onDelete={() => removeTimeslot(index)}
+                    onChange={(name, value) => onChangeItem(index, name, value)}
+                    />
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  function manageButtons() {
+    const previousButtonFn = (disabled: boolean) => <button disabled={disabled} className="btn btn-primary" onClick={()=> setCurrentStep(currentStep - 1)}>⬅️ Previous</button>
+    const nextButtonFn = (disabled: boolean) => <button disabled={disabled} className="btn btn-primary" onClick={()=> setCurrentStep(currentStep + 1)}>Next ➡️</button>
+    const generateButton = <button className="btn btn-primary" disabled={!isValid()} onClick={generate}>Generate 🚀</button>;
+
+    switch(currentStep) {
+      case 0:
+        return (
+        <>
+          {previousButtonFn(true)}
+          {nextButtonFn(false)}
+        </>
+        );
+      case 1:
+        return (
+        <>
+          {previousButtonFn(false)}
+          {nextButtonFn(false)}
+        </>
+        );
+      case 2:
+      default:
+        return (
+        <>
+          {previousButtonFn(false)}
+          {generateButton}
+        </>
+        );
+    }
+  }
+
+  function stepper() {
+    const steps : string[] = [
+      "Birthday 🎂",
+      "TimeSlot 📊",
+      "TimeSlot Durations 📅"
+    ];
+    return (
+      <ul className="steps bg-accent">
+        {
+          steps.map((step, index) => <li key={step} className={`step ${index <= currentStep ? "step-primary" : ""}`}>{step}</li>)
+        }
+      </ul>
+    );
+  }
+
   return (
-    <div className="card w-full bg-base-300 shadow-xl">
-      <div className="card-body gap-7">
-        <h2 className="card-title">Create your life grid</h2>
-        <div className="flex flex-col gap-3">
-          <div>
-            <label className="label">
-              <span className="label-text">Enter your birthday</span>
-            </label>
-            <DatePicker value={birthday} onChange={setBirthday} />
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between">
-              <label className="label">
-                <span className="label-text">Create your periods</span>
-              </label>
-              <button className="btn btn-primary" onClick={addTimeslot}>Add TimeSlot</button>
+    <div className="flex justify-center">
+      <div className="card md:w-9/12 bg-base-300 shadow-xl">
+        <div className="card-body gap-7 justify-center">
+          <h2 className="card-title">Create your life grid</h2>
+          {stepper()}
+          <div className="flex flex-col gap-10 justify-center">
+            { currentStep === 0 && <BirthdayForm birthday={birthday} onChange={(date) => setBirthday(date)} />}
+            { currentStep === 1 && <TimeSlotsForm />}
+            { currentStep === 2 && timeslotDurationForm()}
+            <div className="card-actions justify-between">
+              {manageButtons()}
             </div>
-            <div className="overflow-x-auto">
-              <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
-                <thead>
-                  <tr>
-                    <th>Position</th>
-                    <th>Name</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Color</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    periods.map( ({name, start, end, color, edit}, index) => {
-                      return <TimeSlot
-                        position={index + 1}
-                        key={index}
-                        name={name}
-                        start={start}
-                        end={end}
-                        color={color}
-                        edit={edit}
-                        onDelete={() => removeTimeslot(index)}
-                        onChange={(name, value) => onChangeItem(index, name, value)}
-                        />
-                    })
-                  }
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary" disabled={!isValid()} onClick={generate}>Generate 🚀</button>
           </div>
         </div>
       </div>

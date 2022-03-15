@@ -1,27 +1,27 @@
 import React from 'react';
 import { BrowserRouter } from "react-router-dom";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
-import NavBar from "./NavBar";
-import Footer from "./Footer";
+import NavBar from "./Components/NavBar";
+import Footer from "./Components/Footer";
 import LifeInGridView from "./LifeInGridView";
 import FormView from "./FormView";
 
 
 function App() {
   return (
-      <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-7">
+      <BrowserRouter>
         <NavBar/>
           <div className="p-3 ">
-            <BrowserRouter>
               <Routes>
                   <Route path="/" element={<LifeInGridView />} />
                   <Route path="create" element={<FormView />} />
                   <Route path="*" element={<LifeInGridView />} />
               </Routes>
-            </BrowserRouter>
           </div>
         <Footer/>
+      </BrowserRouter>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
-import { Period } from "./interfaces";
+import { Period } from "../interfaces";
 
 interface RenderData {
   color: string;
@@ -106,7 +106,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
   
   function computeColor(date: Date) : string {
     if(isBefore(date, birthdayDate)) {
-      return "blue";
+      return "#555555";
     }
 
     const periodFound = periods.find(period => isAfter(date, period.start) && isBefore(date, period.end));
@@ -114,7 +114,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
       return periodFound.color;
     }
 
-    return "grey";
+    return "#BBBBBB";
   }
 
   function render(context: CanvasRenderingContext2D) {

@@ -74,7 +74,7 @@ function FormSteps() {
       "TimeSlot Durations 📅"
     ];
     return (
-      <ul className="steps bg-neutral rounded-lg">
+      <ul className="steps bg-neutral rounded-lg p-2">
         {
           steps.map((step, index) => <li key={step} className={`step ${index <= currentStep ? "step-primary" : ""}`}>{step}</li>)
         }
@@ -88,9 +88,9 @@ function FormSteps() {
     <>
       {stepper()}
       <div className="flex flex-col gap-10 justify-center">
-        { currentStep === 0 && <BirthdayForm />}
-        { currentStep === 1 && <TimeSlotsForm />}
-        { currentStep === 2 && <PeriodsForm />}
+          { currentStep === 0 && <BirthdayForm />}
+          { currentStep === 1 && <TimeSlotsForm />}
+          { currentStep === 2 && <PeriodsForm />}
         <div className="card-actions justify-between">
           {manageButtons()}
         </div>

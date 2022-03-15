@@ -18,7 +18,7 @@ function TimeSlotsForm() : React.ReactElement {
   const { timeSlots, addTimeSlot, removeTimeSlot } = DataForm.useContainer();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="bg-neutral rounded-lg p-5 flex flex-col gap-2">
       <div className="flex justify-between">
         <label className="label prose">
           <h2 className="label-text">Create your timeslots</h2>
@@ -26,7 +26,7 @@ function TimeSlotsForm() : React.ReactElement {
         <button className="btn btn-primary" onClick={addTimeSlot}>Add TimeSlot</button>
       </div>
       <div className="overflow-x-auto">
-        <table className="table w-full p-2 border rounded-lg shadow-2xl" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
+        <table className="table w-full" style={{borderCollapse: "revert", borderColor: "hsl(var(--b1) / var(--tw-bg-opacity))"}}>
           <thead>
             <tr>
               <th>Id</th>

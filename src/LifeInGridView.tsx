@@ -67,7 +67,7 @@ function LifeInGridView() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-5">
+    <div className="flex flex-col-reverse md:flex-row gap-5">
         <div className="md:w-3/12 flex flex-col gap-3">
           <Legend
             selectedPeriod={selectedPeriod}

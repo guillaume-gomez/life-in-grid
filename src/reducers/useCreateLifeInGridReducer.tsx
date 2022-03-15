@@ -17,17 +17,16 @@ const defaultTimeSlots : TimeSlotFormInterface[] = [
   { id: uniqueId(), name: "college", color: "#45173b", edit: false },
 ];
 
-
 const initialState : stateInterface = {
   birthday: "",
-  periods: [],
-  timeSlots: defaultTimeSlots
+  timeSlots: defaultTimeSlots,
+  periods: []
 }
 
 function useCreateLifeInGridReducer(state = initialState) {
   const [birthday, setBirthday] = useState<string>(state.birthday);
   const [timeSlots, setTimeSlots] = useState<TimeSlotFormInterface[]>(state.timeSlots);
-  const [periods, setPeriods] = useState<PeriodFormInterface[]>(state.periods);
+  const [periods, setPeriods] = useState<PeriodFormInterface[]>([{timeSlotId: state.timeSlots[0].id, start: "", end:"", edit: false}]);
 
   function addTimeSlot() {
     const timeSlotsInReadOnly = timeSlots.map((timeSlot) => ({ ...timeSlot, edit: false }) );

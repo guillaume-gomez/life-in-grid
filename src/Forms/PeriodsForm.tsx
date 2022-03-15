@@ -64,7 +64,7 @@ function TimeSlot({ timeSlotId, start, end, position, edit, onChange, onDelete }
   const editButton = <button className="btn btn-ghost" onClick={() => onChange("edit", !edit)}>✏️</button>;
   const trashButton = <button className="btn btn-ghost" onClick={onDelete}>🗑</button>;
   const timeSlotSelectFunction =(disabled: boolean) => (
-    <select className="select w-full max-w-xs" disabled={disabled} onChange={(event) => onChange("timeSlotId", event.target.value)}>
+    <select className="select w-full max-w-xs" value={timeSlotId} disabled={disabled} onChange={(event) => onChange("timeSlotId", event.target.value)}>
       <option disabled selected>Pick a time slot</option>
       {
         timeSlots.map(timeSlot =>

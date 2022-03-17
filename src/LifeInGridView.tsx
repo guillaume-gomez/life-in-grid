@@ -16,7 +16,6 @@ const myPeriods : Period[] = [
   { name: "Applidget", color: "#35986f", start: new Date("2015-08-01"), end: new Date("2017-11-01") },
   { name: "Amuse", color: "#F109F9", start: new Date("2017-11-01"), end: new Date("2021-12-15") },
   { name: "Ecotree", color: "#131963", start: new Date("2022-01-03"), end: new Date("2022-03-13") },
-  { name: "pre-school", color: "#af1414", start: new Date("2025-09-01"), end: new Date("2027-06-01") },
 ]
 
 function LifeInGridView() {

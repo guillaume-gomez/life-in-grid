@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
-import { range } from "lodash";
 import { Period } from "../interfaces";
 import { UndefinedColor, BeforeBirthdayColor } from "../Constants";
 
@@ -32,7 +31,7 @@ const MAX_ROW = 53;
 
 function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, showAxis } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-  console.log(periods)
+
   useEffect(() => {
     function init(context: CanvasRenderingContext2D, showAxis: boolean) {
       if(!ref.current) {
@@ -79,6 +78,38 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
   }, [ref, birthdayDate, deathDate, selectedPeriod, showAxis]);
 
   const renderDataMemoized = useMemo(() => {
+
+    function computeName(date: Date) : string {
+      const periodsFound = periods.filter(period => isAfter(date, period.start) && isBefore(date, period.end));
+      if(periodsFound.length >= 1) {
+        const periodFound = periodsFound.find(period => period.overlap === true);
+        if(periodFound) {
+          return periodFound.name;
+        } else {
+          return periodsFound[0].name;
+        }
+      }
+      return "none";
+    }
+  
+    function computeColor(date: Date) : string {
+      if(isBefore(date, birthdayDate)) {
+        return BeforeBirthdayColor;
+      }
+
+      const periodsFound = periods.filter(period => (isAfter(date, period.start) && isBefore(date, period.end)));
+      if(periodsFound.length >= 1) {
+        const periodFound = periodsFound.find(period => period.overlap === true);
+        if(periodFound) {
+          return periodFound.color;
+        } else {
+          return periodsFound[0].color;
+        }
+      }
+
+      return UndefinedColor;
+    }
+
     function generateData(periods: Period[]) {
       const startOfYearDate = startOfYear(birthdayDate);
       const weeksArray = eachWeekOfInterval({
@@ -114,38 +145,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
 
 
     return generateData(periods)
-  }, [periods]);
-
-  function computeName(date: Date) : string {
-    const periodsFound = periods.filter(period => isAfter(date, period.start) && isBefore(date, period.end));
-    if(periodsFound.length >= 1) {
-      const periodFound = periodsFound.find(period => period.overlap === true);
-      if(periodFound) {
-        return periodFound.name;
-      } else {
-        return periodsFound[0].name;
-      }
-    }
-    return "none";
-  }
-  
-  function computeColor(date: Date) : string {
-    if(isBefore(date, birthdayDate)) {
-      return BeforeBirthdayColor;
-    }
-
-    const periodsFound = periods.filter(period => (isAfter(date, period.start) && isBefore(date, period.end)));
-    if(periodsFound.length >= 1) {
-      const periodFound = periodsFound.find(period => period.overlap === true);
-      if(periodFound) {
-        return periodFound.color;
-      } else {
-        return periodsFound[0].color;
-      }
-    }
-
-    return UndefinedColor;
-  }
+  }, [periods, birthdayDate, deathDate]);
 
   function render(context: CanvasRenderingContext2D) {
     let currentColor : string = "FFFFFF";
@@ -165,8 +165,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
   function renderAgesAxis(context: CanvasRenderingContext2D, magicOffset: number) {
     [0, 1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90].forEach((number) => {
       //context.strokeRect(0, (index) * (HEIGHT + OFFSET), WIDTH, HEIGHT);
-      const numberString = number.toString();
-      const textWidth = context.measureText(numberString).width;
       context.fillText(number.toString(), 0, magicOffset + (number-1) * (HEIGHT + OFFSET));
     })
   }
@@ -174,8 +172,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
   function renderWeeksAxis(context: CanvasRenderingContext2D, magicOffset: number) {
     [1,5,10,15,20,25,30,35,40,45,50,53].forEach((number, index) => {
       //context.strokeRect((index) * (WIDTH + OFFSET), 0, WIDTH, HEIGHT);
-      const numberString = number.toString();
-      const textWidth = context.measureText(numberString).width;
       context.fillText(number.toString(), (number -1) * (WIDTH + OFFSET),  magicOffset);
     })
   }

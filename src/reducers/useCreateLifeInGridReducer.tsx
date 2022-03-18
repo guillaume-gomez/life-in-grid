@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { uniqueId } from "lodash";
 import { createContainer } from "unstated-next";
-import { PeriodFormInterface, TimeSlotFormInterface, Period } from "../interfaces";
-//import { } from 'date-fns';
+import { useSearchParams } from "react-router-dom";
+import { parseParams } from "../queryStringHelper";
+import { PeriodFormInterface, TimeSlotFormInterface } from "../interfaces";
+
 
 interface stateInterface {
   birthday: string;
@@ -27,14 +29,46 @@ function useCreateLifeInGridReducer(state = initialState) {
   const [birthday, setBirthday] = useState<string>(state.birthday);
   const [timeSlots, setTimeSlots] = useState<TimeSlotFormInterface[]>(state.timeSlots);
   const [periods, setPeriods] = useState<PeriodFormInterface[]>([]);
+  const [params] = useSearchParams();
 
   // when birthday is set (first step) create a first period based on it.
   useEffect(() => {
-    setPeriods([
-      {timeSlotId: state.timeSlots[0].id, start: birthday, end: birthday, edit: true}
-      ]
-     );
-  }, [birthday]);
+    if(periods.length === 0) {
+      setPeriods([
+        {timeSlotId: state.timeSlots[0].id, start: birthday, end: birthday, edit: true}
+      ]);
+    }
+  }, [birthday, periods.length, state.timeSlots]);
+
+  useEffect(()=> {
+    const periodLength = params.get("period-length");
+    if(!periodLength) {
+      return;
+    }
+    const queryStringObject = parseParams(params, parseInt(periodLength));
+    let newPeriods : PeriodFormInterface[] = [];
+    let newTimeSlots : TimeSlotFormInterface[] = [];
+
+    queryStringObject.periods.forEach(periodParams => {
+      let foundPeriod = newTimeSlots.find(timeSlot => timeSlot.name === periodParams.name );
+      if(!foundPeriod) {
+        foundPeriod = { id: (newTimeSlots.length + 1).toString(), name: periodParams.name, color: periodParams.color, overlap: periodParams.overlap, edit: false };
+        newTimeSlots = [
+          ...newTimeSlots,
+          foundPeriod
+        ];
+      }
+      newPeriods = [
+        ...newPeriods,
+        { timeSlotId: foundPeriod.id, start: periodParams.start.toString(), end: periodParams.end.toString(), edit: false }
+      ];
+    });
+
+    setBirthday(queryStringObject.birthday);
+    setPeriods(newPeriods);
+    setTimeSlots(newTimeSlots);
+
+  }, [params]);
 
   function addTimeSlot() {
     const timeSlotsInReadOnly = timeSlots.map((timeSlot) => ({ ...timeSlot, edit: false }) );

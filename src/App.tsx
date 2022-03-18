@@ -16,7 +16,7 @@ function App() {
           <div className="p-3 ">
               <Routes>
                   <Route path="/" element={<LifeInGridView />} />
-                  <Route path="create" element={<FormView />} />
+                  <Route path="form" element={<FormView />} />
                   <Route path="*" element={<LifeInGridView />} />
               </Routes>
           </div>

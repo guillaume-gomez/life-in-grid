@@ -24,6 +24,7 @@ function LifeInGridView() {
   const [periods, setPeriods] = useState<Period[]>(myPeriods);
   const [forecastDeath] = useState<Date>(new Date(1992 + deathAge, 1, 2));
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+  const [showAxis, setShowAxis] = useState<boolean>(false);
   const [params] = useSearchParams();
 
   useEffect(() => {
@@ -72,11 +73,14 @@ function LifeInGridView() {
             selectedPeriod={selectedPeriod}
             selectedPeriodCallback={selectedPeriodCallback}
             periods={periods}
+            showAxis={showAxis}
+            showAxisCallback={() => setShowAxis(!showAxis) }
           />
           <Link to="/create" className="link">Create your own life in grid</Link>
         </div>
         <div className="md:w-9/12">
           <LifeGridCanvas
+            showAxis={showAxis}
             deathDate={forecastDeath}
             birthdayDate={birthday}
             periods={periods}

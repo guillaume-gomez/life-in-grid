@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
+import { range } from "lodash";
 import { Period } from "../interfaces";
 
 interface RenderData {
@@ -16,13 +17,23 @@ interface LifeGridCanvasProps {
   deathDate: Date;
   periods: Period[];
   selectedPeriod: string;
+  showAxis: boolean;
 }
 
-function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : LifeGridCanvasProps) {
+const WIDTH = 20;
+const HEIGHT = 20;
+const OFFSET = 5;
+const PADDING = 40;
+const HALF_PADDING = PADDING/2;
+const PADDING_AXIS = 40;
+const HALF_PADDING_AXIS = PADDING_AXIS/2;
+const MAX_ROW = 53;
+
+function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, showAxis } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    function init(context: CanvasRenderingContext2D) {
+    function init(context: CanvasRenderingContext2D, showAxis: boolean) {
       if(!ref.current) {
         return;
       }
@@ -32,25 +43,39 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
         end: deathDate
       });
 
-      const width = 20;
-      const height = 20;
-      const offset = 5;
-      const maxRow = 53;
-      const padding = 40;
-
-      ref.current.width =  padding + maxRow * (width + offset);
-      ref.current.height = padding + (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) + 1) * (height + offset);
+      const paddingAxis = showAxis ? PADDING_AXIS : 0;
+      ref.current.width =  PADDING + paddingAxis + MAX_ROW * (WIDTH + OFFSET);
+      ref.current.height = PADDING + paddingAxis + (differenceInCalendarYears(weeksArray[weeksArray.length - 1], weeksArray[0]) + 1) * (HEIGHT + OFFSET);
     }
 
     if(ref.current) {
       const context = ref.current.getContext("2d");
       if(context) {
-        init(context);
-        render(context);
+          init(context, showAxis);
+          if(showAxis) {
+            context.font = 'bold 22px Arial';
+            context.fillStyle = "white"
+            context.strokeStyle = "white";
+            const magicOffset = 17;
+            context.save();
+            context.translate(PADDING_AXIS + OFFSET, HALF_PADDING_AXIS);
+              renderWeeksAxis(context, magicOffset);
+            context.restore();
+            context.save();
+            context.translate(HALF_PADDING_AXIS - OFFSET, PADDING_AXIS + HALF_PADDING_AXIS + OFFSET);
+              renderAgesAxis(context, magicOffset)
+            context.restore();
+            context.save()
+            context.translate(HALF_PADDING + OFFSET, HALF_PADDING);
+              render(context);
+            context.restore();
+          } else {
+            render(context);
+          }
       }
     }
 
-  }, [ref, birthdayDate, deathDate, selectedPeriod]);
+  }, [ref, birthdayDate, deathDate, selectedPeriod, showAxis]);
 
   const renderDataMemoized = useMemo(() => {
     function generateData(periods: Period[]) {
@@ -59,12 +84,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
         start:startOfYearDate,
         end: deathDate
       });
-
-      const width = 20;
-      const height = 20;
-      const offset = 5;
-      const padding = 40;
-      const halfPadding = padding/2;
 
       let x = 0;
       let y = 0;
@@ -81,10 +100,10 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
           { 
             color: computeColor(week),
             name: computeName(week),
-            x : halfPadding + x * (width + offset),
-            y:  halfPadding + y * (height + offset),
-            width,
-            height,
+            x : HALF_PADDING + x * (WIDTH + OFFSET),
+            y:  HALF_PADDING + y * (HEIGHT + OFFSET),
+            width: WIDTH,
+            height: HEIGHT,
           }
         );
         x++;
@@ -132,6 +151,24 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
     });
   }
 
+  function renderAgesAxis(context: CanvasRenderingContext2D, magicOffset: number) {
+    [1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90].forEach((number) => {
+      //context.strokeRect(0, (index) * (HEIGHT + OFFSET), WIDTH, HEIGHT);
+      const numberString = number.toString();
+      const textWidth = context.measureText(numberString).width;
+      context.fillText(number.toString(), 0, magicOffset + (number-1) * (HEIGHT + OFFSET));
+    })
+  }
+
+  function renderWeeksAxis(context: CanvasRenderingContext2D, magicOffset: number) {
+    [1,5,10,15,20,25,30,35,40,45,50,53].forEach((number, index) => {
+      //context.strokeRect((index) * (WIDTH + OFFSET), 0, WIDTH, HEIGHT);
+      const numberString = number.toString();
+      const textWidth = context.measureText(numberString).width;
+      context.fillText(number.toString(), (number -1) * (WIDTH + OFFSET),  magicOffset);
+    })
+  }
+
 
   function drawSquare(context: CanvasRenderingContext2D, { color, x , y, width, height} : RenderData, selected: boolean) {
     const offset = selected ? 1 : 5
@@ -142,6 +179,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod } : L
 
   return (
     <canvas className="w-full bg-black rounded-2xl" id="custom-canvas" ref={ref}></canvas>
+    /*<canvas className="bg-black" id="custom-canvas" ref={ref}></canvas>*/
   );
 }
 

@@ -5,6 +5,8 @@ interface LegendInterface {
     periods: Period[];
     selectedPeriod: string;
     selectedPeriodCallback: (periodName: string) => void;
+    showAxis: boolean;
+    showAxisCallback: () => void;
 }
 
 interface UniqLegendDateInterface {
@@ -21,7 +23,7 @@ interface UniqLegendsInterface {
     [key: string]: UniqLegendDataInterface;
 }
 
-function Legend({ periods, selectedPeriodCallback, selectedPeriod } : LegendInterface) : React.ReactElement {
+function Legend({ periods, selectedPeriodCallback, selectedPeriod, showAxis, showAxisCallback } : LegendInterface) : React.ReactElement {
     const uniqLegends = useMemo(() => {
         return periods.reduce(
             (accumulator : UniqLegendsInterface, current: any) => {
@@ -45,7 +47,7 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod } : LegendInte
     const uniqLegendsArray : Array<[name: string, value: UniqLegendDataInterface]> = Object.entries(uniqLegends);
     return(
         <div className="card w-full bg-base-300 shadow-xl">
-          <div className="card-body">
+          <div className="card-body overflow-auto">
             <h2 className="card-title">Legend</h2>
             <div className="flex flex-wrap gap-3">
                 {
@@ -72,6 +74,14 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod } : LegendInte
                         );
                     })
                 }
+            </div>
+            <div>
+                <div className="form-control">
+                  <label className="label cursor-pointer">
+                    <span className="label-text">Show Axis</span> 
+                    <input type="checkbox" checked={showAxis} onClick={showAxisCallback} className="checkbox"/>
+                  </label>
+                </div>
             </div>
           </div>
         </div>

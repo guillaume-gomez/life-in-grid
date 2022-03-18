@@ -1,11 +1,9 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import DatePicker from "../Components/DatePicker";
 import BirthdayForm from "./BirthdayForm";
 import TimeSlotsForm from "./TimeSlotsForm";
 import PeriodsForm from "./PeriodsForm";
 import DataForm from "../reducers/useCreateLifeInGridReducer";
-import { Period } from "../interfaces";
 
 function FormSteps() {
   const { birthday, periods, timeSlots } = DataForm.useContainer();
@@ -82,8 +80,8 @@ function FormSteps() {
   function stepper() {
     const steps : string[] = [
       "Birthday 🎂",
-      "TimeSlot 📊",
-      "TimeSlot Durations 📅"
+      "TimeSlots 📊",
+      "Periods 📅"
     ];
     return (
       <ul className="steps bg-neutral rounded-lg p-2">

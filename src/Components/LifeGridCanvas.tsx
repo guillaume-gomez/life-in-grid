@@ -62,7 +62,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
               renderWeeksAxis(context, magicOffset);
             context.restore();
             context.save();
-            context.translate(HALF_PADDING_AXIS - OFFSET, PADDING_AXIS + HALF_PADDING_AXIS + OFFSET);
+            context.translate(HALF_PADDING_AXIS - OFFSET, PADDING_AXIS + PADDING_AXIS + 2*OFFSET);
               renderAgesAxis(context, magicOffset)
             context.restore();
             context.save()
@@ -152,7 +152,7 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
   }
 
   function renderAgesAxis(context: CanvasRenderingContext2D, magicOffset: number) {
-    [1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90].forEach((number) => {
+    [0, 1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90].forEach((number) => {
       //context.strokeRect(0, (index) * (HEIGHT + OFFSET), WIDTH, HEIGHT);
       const numberString = number.toString();
       const textWidth = context.measureText(numberString).width;

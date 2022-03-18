@@ -34,7 +34,8 @@ function FormSteps() {
       const timeSlot = timeSlots.find(timeSlot => timeSlot.id === period.timeSlotId);
       const name = timeSlot?.name || "unexisting time slot";
       const color = timeSlot?.color || "#000000";
-      const periodWithTimeSlot = { name, color, start: period.start, end: period.end };
+      const overlap = timeSlot?.overlap || false;
+      const periodWithTimeSlot = { name, color, overlap, start: period.start, end: period.end };
       return periodWithTimeSlot;
     });
     params.append("period-length", computedPeriods.length.toString());

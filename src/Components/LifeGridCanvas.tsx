@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useMemo } from 'react';
 import { differenceInCalendarYears, startOfYear, eachWeekOfInterval, isBefore, isAfter } from 'date-fns';
 import { range } from "lodash";
 import { Period } from "../interfaces";
+import { UndefinedColor, BeforeBirthdayColor } from "../Constants";
 
 interface RenderData {
   color: string;
@@ -31,7 +32,7 @@ const MAX_ROW = 53;
 
 function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, showAxis } : LifeGridCanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null);
-
+  console.log(periods)
   useEffect(() => {
     function init(context: CanvasRenderingContext2D, showAxis: boolean) {
       if(!ref.current) {
@@ -116,24 +117,34 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
   }, [periods]);
 
   function computeName(date: Date) : string {
-    const periodFound = periods.find(period => isAfter(date, period.start) && isBefore(date, period.end));
-    if(periodFound) {
-      return periodFound.name;
+    const periodsFound = periods.filter(period => isAfter(date, period.start) && isBefore(date, period.end));
+    if(periodsFound.length >= 1) {
+      const periodFound = periodsFound.find(period => period.overlap === true);
+      if(periodFound) {
+        return periodFound.name;
+      } else {
+        return periodsFound[0].name;
+      }
     }
     return "none";
   }
   
   function computeColor(date: Date) : string {
     if(isBefore(date, birthdayDate)) {
-      return "#555555";
+      return BeforeBirthdayColor;
     }
 
-    const periodFound = periods.find(period => isAfter(date, period.start) && isBefore(date, period.end));
-    if(periodFound) {
-      return periodFound.color;
+    const periodsFound = periods.filter(period => (isAfter(date, period.start) && isBefore(date, period.end)));
+    if(periodsFound.length >= 1) {
+      const periodFound = periodsFound.find(period => period.overlap === true);
+      if(periodFound) {
+        return periodFound.color;
+      } else {
+        return periodsFound[0].color;
+      }
     }
 
-    return "#BBBBBB";
+    return UndefinedColor;
   }
 
   function render(context: CanvasRenderingContext2D) {
@@ -179,7 +190,6 @@ function LifeGridCanvas({ birthdayDate, deathDate, periods, selectedPeriod, show
 
   return (
     <canvas className="w-full bg-black rounded-2xl" id="custom-canvas" ref={ref}></canvas>
-    /*<canvas className="bg-black" id="custom-canvas" ref={ref}></canvas>*/
   );
 }
 

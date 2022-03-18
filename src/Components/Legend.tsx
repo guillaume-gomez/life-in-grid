@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Period } from "../interfaces";
+import { UndefinedColor, BeforeBirthdayColor } from "../Constants";
 
 interface LegendInterface {
     periods: Period[];
@@ -50,29 +51,31 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod, showAxis, sho
           <div className="card-body overflow-auto">
             <h2 className="card-title">Legend</h2>
             <div className="flex flex-wrap gap-3">
+                <LegendButton
+                      name="Before Birthday"
+                      color={BeforeBirthdayColor}
+                      dates={[]}
+                      disabled={false}
+                      selected={false}
+                />
+                <LegendButton
+                    name="Unset"
+                    color={UndefinedColor}
+                    dates={[]}
+                    disabled={false}
+                    selected={false}
+                />
                 {
-                    uniqLegendsArray.map(([name, value]) => {
-                        return (
-                            <button
-                                key={name}
-                                style={{ height: "max-content" }}
-                                className={ selectedPeriod === name ? "btn btn-primary" :"btn btn-ghost"}
-                                onClick={() => selectedPeriodCallback(name)}
-                            >
-                                <div className="flex flex-col">
-                                    <div className="flex gap-2 items-center">
-                                        <div className="w-6 h-6 rounded" style={{backgroundColor: value.color}}></div>
-                                        <span>{name}</span>
-                                    </div>
-                                    {
-                                        value.dates.map((date, index) =>
-                                            <span key={index} className="text-xs">{date.start.toDateString()} - {date.end.toDateString()}</span>
-                                        )
-                                    }
-                                </div>
-                            </button>
-                        );
-                    })
+                    uniqLegendsArray.map(([name, value]) => 
+                      <LegendButton
+                          name={name}
+                          color={value.color}
+                          dates={value.dates}
+                          disabled={false}
+                          selected={ name === selectedPeriod}
+                          selectedPeriodCallback={selectedPeriodCallback}
+                      />
+                    )
                 }
             </div>
             <div>
@@ -86,6 +89,39 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod, showAxis, sho
           </div>
         </div>
     );
+}
+
+interface LegendButtonInterface {
+    name: string;
+    color: string;
+    dates: UniqLegendDateInterface[];
+    disabled: boolean;
+    selected: boolean;
+    selectedPeriodCallback?: (name: string) => void;
+}
+
+function LegendButton({name, color, dates, disabled, selected, selectedPeriodCallback }: LegendButtonInterface) : React.ReactElement {
+    return(
+    <button
+        disabled={disabled}
+        key={name}
+        style={{ height: "max-content" }}
+        className={ selected ? "btn btn-primary" :"btn btn-ghost"}
+        onClick={() => selectedPeriodCallback && selectedPeriodCallback(name)}
+    >
+        <div className="flex flex-col">
+            <div className="flex gap-2 items-center">
+                <div className="w-6 h-6 rounded" style={{backgroundColor: color}}></div>
+                <span>{name}</span>
+            </div>
+            {
+                dates.map((date, index) =>
+                    <span key={index} className="text-xs">{date.start.toDateString()} - {date.end.toDateString()}</span>
+                )
+            }
+        </div>
+    </button>
+   )
 }
 
 export default Legend;

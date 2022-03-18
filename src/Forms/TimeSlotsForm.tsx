@@ -12,6 +12,7 @@ interface TimeSlotRowInterface {
   color: string;
   id: string;
   edit: boolean;
+  overlap: boolean;
 }
 
 function TimeSlotsForm() : React.ReactElement {
@@ -32,17 +33,19 @@ function TimeSlotsForm() : React.ReactElement {
               <th>Id</th>
               <th>Name</th>
               <th>Color</th>
+              <th>Overlap</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {
-              timeSlots.map( ({id, name, color, edit}) => {
+              timeSlots.map( ({id, name, color, edit, overlap}) => {
                 return <TimeSlotRow
                   id={id}
                   key={id}
                   name={name}
                   color={color}
+                  overlap={overlap}
                   edit={edit}
                   />
               })
@@ -54,7 +57,7 @@ function TimeSlotsForm() : React.ReactElement {
   );
 }
 
-function TimeSlotRow({name, color, id, edit } : TimeSlotRowInterface) {
+function TimeSlotRow({name, color, id, edit, overlap } : TimeSlotRowInterface) {
   const { onChangeTimeSlot, removeTimeSlot } = DataForm.useContainer();
   const editButton = <button className="btn btn-ghost" onClick={() => onChangeTimeSlot(id, "edit", !edit)}>✏️</button>;
   const trashButton = <button className="btn btn-ghost" onClick={() => removeTimeSlot(id)}>🗑</button>;
@@ -63,13 +66,16 @@ function TimeSlotRow({name, color, id, edit } : TimeSlotRowInterface) {
     return (
       <tr className="active">
         <th className="w-1/12">{id}</th>
-        <td className="w-3/12">
+        <td className="w-5/12">
           <input className="input w-full max-w-xs" value={name} onChange={(event) => onChangeTimeSlot(id, "name", event.target.value)}/>
         </td>
-        <td className="w-1/12">
+        <td className="w-3/12">
           <input type="color" value={color} onChange={(event) => onChangeTimeSlot(id, "color", event.target.value)}/>
         </td>
         <td className="w-1/12">
+          <input className="toggle" type="checkbox" checked={overlap} onChange={(event) => onChangeTimeSlot(id, "overlap", !overlap)}/>
+        </td>
+        <td className="w-2/12">
           {editButton}
           {trashButton}
         </td>
@@ -81,11 +87,12 @@ function TimeSlotRow({name, color, id, edit } : TimeSlotRowInterface) {
   return (
       <tr onClick={()=> onChangeTimeSlot(id, "edit", true)}>
         <th className="w-1/12">{id}</th>
-        <td className="w-3/12">{name}</td>
-        <td className="w-1/12">
+        <td className="w-5/12">{name}</td>
+        <td className="w-3/12">
           <input disabled type="color" value={color}/>
         </td>
-        <td className="w-1/12">
+        <td className="w-1/12">{overlap.toString()}</td>
+        <td className="w-2/12">
           {editButton}
         </td>
       </tr>

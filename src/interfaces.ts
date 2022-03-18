@@ -3,6 +3,7 @@ export interface Period {
   color: string;
   start: Date;
   end: Date;
+  overlap: boolean;
 }
 
 export interface PeriodFormInterface {
@@ -17,5 +18,6 @@ export interface TimeSlotFormInterface {
   color: string;
   name: string;
   edit: boolean;
+  overlap: boolean;
 }
 

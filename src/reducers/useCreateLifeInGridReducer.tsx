@@ -11,14 +11,14 @@ interface stateInterface {
 }
 
 const defaultTimeSlots : TimeSlotFormInterface[] = [
-  { id: uniqueId(), name: "pre-school", color: "#bbd00d", edit: false },
-  { id: uniqueId(), name: "middle-school", color: "#17810a", edit: false },
-  { id: uniqueId(), name: "high-school", color: "#a4580b", edit: false },
-  { id: uniqueId(), name: "college", color: "#45173b", edit: false },
+  { id: uniqueId(), name: "pre-school", color: "#bbd00d", edit: false, overlap: false },
+  { id: uniqueId(), name: "middle-school", color: "#17810a", edit: false, overlap: false },
+  { id: uniqueId(), name: "high-school", color: "#a4580b", edit: false, overlap: false },
+  { id: uniqueId(), name: "college", color: "#45173b", edit: false, overlap: false },
 ];
 
 const initialState : stateInterface = {
-  birthday: "1900-01-01",
+  birthday: "2000-01-01",
   timeSlots: defaultTimeSlots,
   periods: []
 }
@@ -40,7 +40,7 @@ function useCreateLifeInGridReducer(state = initialState) {
     const timeSlotsInReadOnly = timeSlots.map((timeSlot) => ({ ...timeSlot, edit: false }) );
     setTimeSlots([
       ...timeSlotsInReadOnly,
-      { id: uniqueId(), name: "new time slot ...", color: "#FF0000", edit: false }
+      { id: uniqueId(), name: "new time slot ...", color: "#FF0000", edit: false, overlap: false }
       ]
     );
   }

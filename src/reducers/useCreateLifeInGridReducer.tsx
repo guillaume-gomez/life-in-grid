@@ -18,7 +18,7 @@ const defaultTimeSlots : TimeSlotFormInterface[] = [
 ];
 
 const initialState : stateInterface = {
-  birthday: "",
+  birthday: "1900-01-01",
   timeSlots: defaultTimeSlots,
   periods: []
 }
@@ -26,7 +26,7 @@ const initialState : stateInterface = {
 function useCreateLifeInGridReducer(state = initialState) {
   const [birthday, setBirthday] = useState<string>(state.birthday);
   const [timeSlots, setTimeSlots] = useState<TimeSlotFormInterface[]>(state.timeSlots);
-  const [periods, setPeriods] = useState<PeriodFormInterface[]>([{timeSlotId: state.timeSlots[0].id, start: "", end:"", edit: false}]);
+  const [periods, setPeriods] = useState<PeriodFormInterface[]>([{timeSlotId: state.timeSlots[0].id, start: "1900-01-01", end:"1900-01-01", edit: false}]);
 
   function addTimeSlot() {
     const timeSlotsInReadOnly = timeSlots.map((timeSlot) => ({ ...timeSlot, edit: false }) );
@@ -72,7 +72,6 @@ function useCreateLifeInGridReducer(state = initialState) {
       togglePeriod(index, value as boolean);
       return;
     }
-
     const newPeriods = periods.map((period, indexPeriod) => {
       if(indexPeriod === index) {
         return { ...period , [name]: value};

@@ -12,10 +12,10 @@ const myPeriods : Period[] = [
   { name: "middle-school", color: "#17810a", start: new Date("1998-09-01"), end: new Date("2003-06-01"), overlap: false },
   { name: "high-school", color: "#a4580b", start: new Date("2003-09-01"), end: new Date("2007-06-01"), overlap: false },
   { name: "college", color: "#45173b", start: new Date("2007-09-01"), end: new Date("2010-06-01"), overlap: false },
-  { name: "IT-schools", color: "#dc6cc3", start: new Date("2010-09-01"), end: new Date("2015-06-01"), overlap: false },
-  { name: "Applidget", color: "#35986f", start: new Date("2015-08-01"), end: new Date("2017-11-01"), overlap: false },
-  { name: "Amuse", color: "#F109F9", start: new Date("2017-11-01"), end: new Date("2021-12-15"), overlap: false },
-  { name: "Ecotree", color: "#131963", start: new Date("2022-01-03"), end: new Date("2022-03-18"), overlap: false },
+  { name: "IT-schools", color: "#f2cb00", start: new Date("2010-09-01"), end: new Date("2015-06-01"), overlap: false },
+  { name: "Applidget", color: "#259d92", start: new Date("2015-08-01"), end: new Date("2017-11-01"), overlap: false },
+  { name: "Amuse", color: "#d62f2a", start: new Date("2017-11-01"), end: new Date("2021-12-15"), overlap: false },
+  { name: "Ecotree", color: "#5a914e", start: new Date("2022-01-03"), end: new Date("2022-03-18"), overlap: false },
 ]
 
 function LifeInGridView() {

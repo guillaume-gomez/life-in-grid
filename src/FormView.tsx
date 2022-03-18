@@ -1,9 +1,6 @@
-import React, { useState } from 'react';
-import { useNavigate } from "react-router-dom";
-
+import React from 'react';
 import FormSteps from "./Forms/FormSteps";
 import DataForm from "./reducers/useCreateLifeInGridReducer";
-import { Period } from "./interfaces";
 
 
 function FormView() {

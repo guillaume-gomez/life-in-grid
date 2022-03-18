@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { uniqueId } from "lodash";
 import { createContainer } from "unstated-next";
 import { PeriodFormInterface, TimeSlotFormInterface, Period } from "../interfaces";
@@ -26,7 +26,15 @@ const initialState : stateInterface = {
 function useCreateLifeInGridReducer(state = initialState) {
   const [birthday, setBirthday] = useState<string>(state.birthday);
   const [timeSlots, setTimeSlots] = useState<TimeSlotFormInterface[]>(state.timeSlots);
-  const [periods, setPeriods] = useState<PeriodFormInterface[]>([{timeSlotId: state.timeSlots[0].id, start: "1900-01-01", end:"1900-01-01", edit: false}]);
+  const [periods, setPeriods] = useState<PeriodFormInterface[]>([]);
+
+  // when birthday is set (first step) create a first period based on it.
+  useEffect(() => {
+    setPeriods([
+      {timeSlotId: state.timeSlots[0].id, start: birthday, end: birthday, edit: true}
+      ]
+     );
+  }, [birthday]);
 
   function addTimeSlot() {
     const timeSlotsInReadOnly = timeSlots.map((timeSlot) => ({ ...timeSlot, edit: false }) );
@@ -74,7 +82,11 @@ function useCreateLifeInGridReducer(state = initialState) {
     }
     const newPeriods = periods.map((period, indexPeriod) => {
       if(indexPeriod === index) {
-        return { ...period , [name]: value};
+        if(name === "start") {
+          return { ...period , end: (value as string), [name]: (value as string)};
+        } else {
+          return { ...period , [name]: value};
+        }
       }
       return period;
     });
@@ -95,7 +107,7 @@ function useCreateLifeInGridReducer(state = initialState) {
     const periodsInReadOnly = periods.map((period) => ({ ...period, edit: false }) );
     setPeriods([
       ...periodsInReadOnly,
-      { timeSlotId: timeSlots[0].id, start: "", end: "", edit: true }
+      { timeSlotId: timeSlots[0].id, start: birthday, end: birthday, edit: true }
     ]);
   }
 

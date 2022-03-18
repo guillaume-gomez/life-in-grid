@@ -41,13 +41,13 @@ function DatePicker({ value, onChange } : DatePickerInterface): React.ReactEleme
       </select>
       <select className="select max-w-xs" value={getMonth()} onChange={(event) => onChange(`${getYear()}-${event.target.value}-${getDay()}`)}>
         <option disabled selected>Month</option>
-        {range(1, 12).map(month => 
+        {range(1, 12+1).map(month => 
           <option>{month}</option>
         )}
       </select>
       <select className="select max-w-xs" value={getDay()} onChange={(event) => onChange(`${getYear()}-${getMonth()}-${event.target.value}`)}>
         <option disabled selected>Day</option>
-        {range(1, getNumberOfDays(getDay())).map(day => 
+        {range(1, getNumberOfDays(getMonth()) + 1).map(day => 
           <option>{day}</option>
         )}
       </select>

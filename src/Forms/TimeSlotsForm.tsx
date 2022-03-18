@@ -1,11 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import DataForm from "../reducers/useCreateLifeInGridReducer";
-
-interface TimeSlot {
-  name: string;
-  color: string;
-  edit: boolean;
-}
 
 interface TimeSlotRowInterface {
   name: string;
@@ -16,7 +10,7 @@ interface TimeSlotRowInterface {
 }
 
 function TimeSlotsForm() : React.ReactElement {
-  const { timeSlots, addTimeSlot, removeTimeSlot } = DataForm.useContainer();
+  const { timeSlots, addTimeSlot } = DataForm.useContainer();
 
   return (
     <div className="bg-neutral rounded-lg p-5 flex flex-col gap-2">

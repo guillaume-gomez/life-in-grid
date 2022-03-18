@@ -78,8 +78,8 @@ function Legend({ periods, selectedPeriodCallback, selectedPeriod, showAxis, sho
             <div>
                 <div className="form-control">
                   <label className="label cursor-pointer">
-                    <span className="label-text">Show Axis</span> 
-                    <input type="checkbox" checked={showAxis} onClick={showAxisCallback} className="checkbox"/>
+                    <span className="label-text">Show Axis <span>(X: Weeks / Y: Years)</span></span>
+                    <input type="checkbox" checked={showAxis} onClick={showAxisCallback} className="toggle"/>
                   </label>
                 </div>
             </div>

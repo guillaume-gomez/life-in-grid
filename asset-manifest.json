@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/life-in-grid/static/css/main.070c0760.css",
+    "main.js": "/life-in-grid/static/js/main.c8de4d00.js",
+    "static/js/787.d21318d6.chunk.js": "/life-in-grid/static/js/787.d21318d6.chunk.js",
+    "index.html": "/life-in-grid/index.html",
+    "main.070c0760.css.map": "/life-in-grid/static/css/main.070c0760.css.map",
+    "main.c8de4d00.js.map": "/life-in-grid/static/js/main.c8de4d00.js.map",
+    "787.d21318d6.chunk.js.map": "/life-in-grid/static/js/787.d21318d6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.070c0760.css",
+    "static/js/main.c8de4d00.js"
+  ]
+}

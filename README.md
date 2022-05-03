@@ -4,6 +4,6 @@ Based on [that youtube video (in french)](https://www.youtube.com/watch?v=q_AL1R
 
 More info about the concept [in english](https://waitbutwhy.com/2014/05/life-weeks.html)
 
-
+![screenshot](./screenshot.png)
 
 [try online](https://guillaume-gomez.github.io/life-in-grid)

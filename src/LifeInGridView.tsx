@@ -72,7 +72,7 @@ function LifeInGridView() {
             /*is has params*/
             params.get("period-length") ?
               <Link to={`/form?${params.toString()}`} className="link">Edit your own life in grid</Link> :
-              <Link to="/form" className="link">Create your own life in grid</Link>
+              <Link to="/form" className="btn btn-primary">Create your own life in grid</Link>
           }
         </div>
         <div className="md:w-9/12">
